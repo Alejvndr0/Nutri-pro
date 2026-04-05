@@ -10,7 +10,9 @@
   
   <style>
     body { font-family: 'Inter', system-ui, sans-serif; }
-    .card { box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1); }
+    .card { 
+      box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1); 
+    }
     .input-focus:focus {
       border-color: #10b981;
       box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
@@ -18,31 +20,43 @@
     .decimal-result { font-variant-numeric: tabular-nums; }
     #porcentajeTotal.error { color: #ef4444; font-weight: 600; }
     #porcentajeTotal.success { color: #10b981; font-weight: 600; }
+
+    /* Mejoras de responsividad */
+    @media (max-width: 640px) {
+      .grid-cols-2 { grid-template-columns: 1fr; }
+      .grid-cols-3 { grid-template-columns: 1fr; }
+      .p-10 { padding: 1.5rem; }
+      .text-4xl { font-size: 2rem; line-height: 2.25rem; }
+      .text-6xl { font-size: 2.75rem; line-height: 1; }
+    }
   </style>
 </head>
-<body class="bg-gradient-to-br from-emerald-50 to-teal-50 min-h-screen py-12">
+<body class="bg-gradient-to-br from-emerald-50 to-teal-50 min-h-screen py-8 md:py-12">
 
-  <div class="max-w-5xl mx-auto px-6">
-    <div class="text-center mb-12">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6">
+    
+    <!-- Header -->
+    <div class="text-center mb-10 md:mb-12">
       <div class="flex items-center justify-center gap-4 mb-4">
-        <div class="w-16 h-16 bg-emerald-600 rounded-3xl flex items-center justify-center text-white text-4xl">
+        <div class="w-14 h-14 md:w-16 md:h-16 bg-emerald-600 rounded-3xl flex items-center justify-center text-white text-4xl">
           <i class="fa-solid fa-apple-whole"></i>
         </div>
-        <h1 class="text-4xl font-bold text-gray-800">Cálculo de Requerimientos Nutricionales</h1>
+        <h1 class="text-3xl md:text-4xl font-bold text-gray-800">Requerimientos Nutricionales</h1>
       </div>
-      <p class="text-emerald-700 font-medium">Mifflin-St Jeor + Factores FAO/OMS</p>
+      <p class="text-emerald-700 font-medium text-sm md:text-base">Fórmula Mifflin-St Jeor + Factores FAO/OMS</p>
     </div>
 
-    <div class="grid lg:grid-cols-5 gap-8">
+    <div class="grid lg:grid-cols-5 gap-6 md:gap-8">
+      
       <!-- Formulario -->
-      <div class="lg:col-span-3 bg-white rounded-3xl p-10 card">
+      <div class="lg:col-span-3 bg-white rounded-3xl p-6 md:p-10 card">
         <h2 class="text-2xl font-semibold text-gray-800 mb-8">Datos del Paciente</h2>
 
         <form id="calcForm" class="space-y-8">
-          <div class="grid grid-cols-2 gap-6">
+          <div class="grid grid-cols-2 gap-4 md:gap-6">
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Sexo</label>
-              <select id="sexo" class="w-full px-5 py-4 border border-gray-300 rounded-2xl input-focus">
+              <select id="sexo" class="w-full px-5 py-4 border border-gray-300 rounded-2xl input-focus text-base">
                 <option value="hombre">Masculino</option>
                 <option value="mujer" selected>Femenino</option>
               </select>
@@ -50,26 +64,26 @@
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Edad (años)</label>
               <input type="number" id="edad" placeholder="Ej: 53" min="1" 
-                     class="w-full px-5 py-4 border border-gray-300 rounded-2xl input-focus" required>
+                     class="w-full px-5 py-4 border border-gray-300 rounded-2xl input-focus text-base" required>
             </div>
           </div>
 
-          <div class="grid grid-cols-2 gap-6">
+          <div class="grid grid-cols-2 gap-4 md:gap-6">
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Peso (kg)</label>
-              <input type="number" id="peso" step="0.01" placeholder="Ej: 51" 
-                     class="w-full px-5 py-4 border border-gray-300 rounded-2xl input-focus" required>
+              <input type="number" id="peso" step="0.01" placeholder="Ej: 51.5" 
+                     class="w-full px-5 py-4 border border-gray-300 rounded-2xl input-focus text-base" required>
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Talla / Altura (cm)</label>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Talla (cm)</label>
               <input type="number" id="talla" step="0.1" placeholder="Ej: 152" 
-                     class="w-full px-5 py-4 border border-gray-300 rounded-2xl input-focus" required>
+                     class="w-full px-5 py-4 border border-gray-300 rounded-2xl input-focus text-base" required>
             </div>
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Nivel de Actividad Física (FAO/OMS)</label>
-            <select id="actividad" class="w-full px-5 py-4 border border-gray-300 rounded-2xl input-focus">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Nivel de Actividad Física</label>
+            <select id="actividad" class="w-full px-5 py-4 border border-gray-300 rounded-2xl input-focus text-base">
               <option value="sedentaria">Sedentaria</option>
               <option value="liviana">Liviana</option>
               <option value="moderada" selected>Moderada</option>
@@ -77,64 +91,69 @@
             </select>
           </div>
 
+          <!-- Distribución de Macronutrientes -->
           <div class="pt-6 border-t">
             <h3 class="text-xl font-semibold text-gray-800 mb-5">Distribución de Macronutrientes (%)</h3>
-            <div class="grid grid-cols-3 gap-6">
+            <div class="grid grid-cols-3 gap-4 md:gap-6">
               <div>
                 <label class="block text-xs text-gray-500 mb-1">Proteínas (%)</label>
-                <input type="number" id="proteinas" placeholder="Ej: 15" min="5" max="60" step="0.01" 
+                <input type="number" id="proteinas" placeholder="15" min="5" max="60" step="0.01" 
                        class="w-full px-6 py-5 border border-gray-300 rounded-2xl input-focus text-2xl font-semibold text-center" required>
               </div>
               <div>
                 <label class="block text-xs text-gray-500 mb-1">Carbohidratos (%)</label>
-                <input type="number" id="carbs" placeholder="Ej: 55" min="5" max="70" step="0.01" 
+                <input type="number" id="carbs" placeholder="55" min="5" max="70" step="0.01" 
                        class="w-full px-6 py-5 border border-gray-300 rounded-2xl input-focus text-2xl font-semibold text-center" required>
               </div>
               <div>
                 <label class="block text-xs text-gray-500 mb-1">Grasas (%)</label>
-                <input type="number" id="grasas" placeholder="Ej: 30" min="5" max="50" step="0.01" 
+                <input type="number" id="grasas" placeholder="30" min="5" max="50" step="0.01" 
                        class="w-full px-6 py-5 border border-gray-300 rounded-2xl input-focus text-2xl font-semibold text-center" required>
               </div>
             </div>
-            <p id="porcentajeTotal" class="text-center text-sm mt-3">Total: 0%</p>
+            <p id="porcentajeTotal" class="text-center text-sm mt-4">Total: 0%</p>
           </div>
 
-          <div class="flex gap-4 mt-8">
-            <button type="submit" class="flex-1 bg-emerald-600 hover:bg-emerald-700 transition-all text-white font-semibold py-5 rounded-2xl text-xl flex items-center justify-center gap-3">
+          <!-- Botones -->
+          <div class="flex flex-col sm:flex-row gap-3 md:gap-4 mt-10">
+            <button type="submit" 
+                    class="flex-1 bg-emerald-600 hover:bg-emerald-700 transition-all text-white font-semibold py-5 rounded-2xl text-lg md:text-xl flex items-center justify-center gap-3">
               <i class="fa-solid fa-calculator"></i>
-              Calcular Requerimientos
+              <span>Calcular</span>
             </button>
             
             <button type="button" id="btnReset" 
-                    class="flex-1 bg-gray-500 hover:bg-gray-600 transition-all text-white font-semibold py-5 rounded-2xl text-xl flex items-center justify-center gap-3">
+                    class="flex-1 bg-gray-500 hover:bg-gray-600 transition-all text-white font-semibold py-5 rounded-2xl text-lg md:text-xl flex items-center justify-center gap-3">
               <i class="fa-solid fa-rotate-right"></i>
-              Reiniciar Formulario
+              <span>Reiniciar</span>
             </button>
 
-            <button type="button" id="btnPDF" class="flex-1 bg-teal-600 hover:bg-teal-700 transition-all text-white font-semibold py-5 rounded-2xl text-xl flex items-center justify-center gap-3">
+            <button type="button" id="btnPDF" 
+                    class="flex-1 bg-teal-600 hover:bg-teal-700 transition-all text-white font-semibold py-5 rounded-2xl text-lg md:text-xl flex items-center justify-center gap-3">
               <i class="fa-solid fa-file-pdf"></i>
-              Generar PDF
+              <span>PDF</span>
             </button>
           </div>
         </form>
       </div>
 
       <!-- Resultados -->
-      <div id="resultados" class="lg:col-span-2 bg-white rounded-3xl p-10 card hidden">
+      <div id="resultados" class="lg:col-span-2 bg-white rounded-3xl p-6 md:p-10 card hidden">
         <h2 class="text-2xl font-semibold text-gray-800 mb-8 flex items-center gap-3">
-          <i class="fa-solid fa-file-medical text-emerald-600"></i> Resultados
+          <i class="fa-solid fa-file-medical text-emerald-600"></i> 
+          Resultados
         </h2>
 
-        <div class="space-y-8">
+        <div class="space-y-6 md:space-y-8">
           <div class="bg-emerald-50 rounded-2xl p-6">
             <p class="text-emerald-700 text-sm font-medium">Requerimiento Calórico Basal (RCB)</p>
-            <p id="rcb" class="text-5xl font-bold text-emerald-800 mt-2">0 kcal</p>
-            <p class="text-xs text-emerald-600">Fórmula Mifflin-St Jeor</p>
+            <p id="rcb" class="text-4xl md:text-5xl font-bold text-emerald-800 mt-2">0 kcal</p>
+            <p class="text-xs text-emerald-600 mt-1">Fórmula Mifflin-St Jeor</p>
           </div>
 
           <div class="bg-teal-50 rounded-2xl p-6">
             <p class="text-teal-700 text-sm font-medium">Requerimiento Calórico Total (RCT)</p>
-            <p id="rct" class="text-6xl font-bold text-teal-800 mt-2 decimal-result">0 kcal/día</p>
+            <p id="rct" class="text-5xl md:text-6xl font-bold text-teal-800 mt-2 decimal-result">0 kcal/día</p>
             <p id="factorUsado" class="text-xs text-teal-600 mt-1"></p>
           </div>
 
@@ -145,13 +164,14 @@
         </div>
 
         <div class="mt-10 text-xs text-gray-500 border-t pt-6">
-          <p><strong>Nota:</strong> Valores mostrados con precisión completa. Ajustar según necesidad clínica.</p>
+          <p><strong>Nota:</strong> Estos son valores estimados. Ajustar según evaluación clínica.</p>
         </div>
       </div>
     </div>
   </div>
 
   <script>
+    // === Código JavaScript (sin cambios importantes, solo pequeñas mejoras) ===
     const form = document.getElementById('calcForm');
     const resultadosDiv = document.getElementById('resultados');
     const btnPDF = document.getElementById('btnPDF');
@@ -183,15 +203,15 @@
 
       macros.forEach(m => {
         const div = document.createElement('div');
-        div.className = "bg-gray-50 rounded-2xl p-6";
+        div.className = "bg-gray-50 rounded-2xl p-5 md:p-6";
         div.innerHTML = `
           <div class="flex justify-between items-center mb-3">
             <span class="font-semibold text-lg">${m.nombre}</span>
-            <span class="text-3xl font-bold text-gray-800 decimal-result">${m.g.toFixed(4)} g</span>
+            <span class="text-2xl md:text-3xl font-bold text-gray-800 decimal-result">${m.g.toFixed(2)} g</span>
           </div>
           <div class="flex justify-between text-sm text-gray-600 mb-3">
             <span>${m.pct}% del total</span>
-            <span class="decimal-result">${m.kcal.toFixed(2)} kcal</span>
+            <span class="decimal-result">${m.kcal.toFixed(1)} kcal</span>
           </div>
           <div class="h-2.5 bg-gray-200 rounded-full overflow-hidden">
             <div class="h-full bg-${m.color}-500 rounded-full" style="width: ${m.pct}%"></div>
@@ -239,15 +259,15 @@
       doc.setFontSize(14);
       doc.text("Resultados", 20, 125);
       doc.setFontSize(12);
-      doc.text(`Requerimiento Calórico Basal (RCB): ${rcb}`, 20, 135);
-      doc.text(`Requerimiento Calórico Total (RCT): ${rct}`, 20, 142);
+      doc.text(`Requerimiento Calórico Basal: ${rcb}`, 20, 135);
+      doc.text(`Requerimiento Calórico Total: ${rct}`, 20, 142);
 
       doc.setFontSize(14);
       doc.text("Distribución de Macronutrientes", 20, 160);
 
-      const prot = document.querySelector('#macrosContainer div:nth-child(1) .text-3xl')?.textContent || '—';
-      const carb = document.querySelector('#macrosContainer div:nth-child(2) .text-3xl')?.textContent || '—';
-      const grasa = document.querySelector('#macrosContainer div:nth-child(3) .text-3xl')?.textContent || '—';
+      const prot = document.querySelector('#macrosContainer div:nth-child(1) .text-3xl, #macrosContainer div:nth-child(1) .text-2xl')?.textContent || '—';
+      const carb = document.querySelector('#macrosContainer div:nth-child(2) .text-3xl, #macrosContainer div:nth-child(2) .text-2xl')?.textContent || '—';
+      const grasa = document.querySelector('#macrosContainer div:nth-child(3) .text-3xl, #macrosContainer div:nth-child(3) .text-2xl')?.textContent || '—';
 
       doc.setFontSize(11);
       doc.text(`Proteínas: ${prot}`, 20, 170);
@@ -255,7 +275,6 @@
       doc.text(`Grasas: ${grasa}`, 20, 184);
 
       const fecha = new Date().toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
-
       doc.setFontSize(10);
       doc.text(`Fecha: ${fecha}`, 20, 205);
 
@@ -263,7 +282,6 @@
     }
 
     function resetFormulario() {
-      // Limpiar campos numéricos
       document.getElementById('edad').value = '';
       document.getElementById('peso').value = '';
       document.getElementById('talla').value = '';
@@ -271,16 +289,12 @@
       document.getElementById('carbs').value = '';
       document.getElementById('grasas').value = '';
 
-      // Actualizar total
       totalPctEl.textContent = 'Total: 0%';
       totalPctEl.classList.remove('success');
       totalPctEl.classList.add('error');
-
-      // Ocultar resultados
       resultadosDiv.classList.add('hidden');
     }
 
-    // Actualizar porcentaje total en tiempo real
     function actualizarPorcentajeTotal() {
       const p = parseFloat(document.getElementById('proteinas').value) || 0;
       const c = parseFloat(document.getElementById('carbs').value) || 0;
