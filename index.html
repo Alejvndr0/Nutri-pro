@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cálculo de Requerimientos Nutricionales - NutriPro</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- jsPDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    .card { box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1); }
+    .input-focus:focus {
+      border-color: #10b981;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+    }
+    .decimal-result {
+      font-variant-numeric: tabular-nums;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-emerald-50 to-teal-50 min-h-screen py-12">
+
+  <div class="max-w-5xl mx-auto px-6">
+    <div class="text-center mb-12">
+      <div class="flex items-center justify-center gap-4 mb-4">
+        <div class="w-16 h-16 bg-emerald-600 rounded-3xl flex items-center justify-center text-white text-4xl">
+          <i class="fa-solid fa-apple-whole"></i>
+        </div>
+        <h1 class="text-4xl font-bold text-gray-800">Cálculo de Requerimientos Nutricionales</h1>
+      </div>
+      <p class="text-emerald-700 font-medium">Mifflin-St Jeor + Factores FAO/OMS</p>
+    </div>
+
+    <div class="grid lg:grid-cols-5 gap-8">
+      <!-- Formulario -->
+      <div class="lg:col-span-3 bg-white rounded-3xl p-10 card">
+        <h2 class="text-2xl font-semibold text-gray-800 mb-8">Datos del Paciente</h2>
+
+        <form id="calcForm" class="space-y-8">
+          <!-- ... (el formulario se mantiene igual que antes) ... -->
+          <div class="grid grid-cols-2 gap-6">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Sexo</label>
+              <select id="sexo" class="w-full px-5 py-4 border border-gray-300 rounded-2xl input-focus">
+                <option value="hombre">Masculino</option>
+                <option value="mujer" selected>Femenino</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Edad (años)</label>
+              <input type="number" id="edad" placeholder="Ej: 53" value="53" min="1" class="w-full px-5 py-4 border border-gray-300 rounded-2xl input-focus" required>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-6">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Peso (kg)</label>
+              <input type="number" id="peso" step="0.01" placeholder="Ej: 51" value="51" class="w-full px-5 py-4 border border-gray-300 rounded-2xl input-focus" required>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Talla / Altura (cm)</label>
+              <input type="number" id="talla" step="0.1" placeholder="Ej: 152" value="152" class="w-full px-5 py-4 border border-gray-300 rounded-2xl input-focus" required>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Nivel de Actividad Física (FAO/OMS)</label>
+            <select id="actividad" class="w-full px-5 py-4 border border-gray-300 rounded-2xl input-focus">
+              <option value="sedentaria">Sedentaria</option>
+              <option value="liviana">Liviana</option>
+              <option value="moderada" selected>Moderada</option>
+              <option value="intensa">Intensa</option>
+            </select>
+          </div>
+
+          <div class="pt-6 border-t">
+            <h3 class="text-xl font-semibold text-gray-800 mb-5">Distribución de Macronutrientes (%)</h3>
+            <div class="grid grid-cols-3 gap-6">
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">Proteínas (%)</label>
+                <input type="number" id="proteinas" value="12" min="5" max="60" step="0.01" class="w-full px-6 py-5 border border-gray-300 rounded-2xl input-focus text-2xl font-semibold text-center" required>
+              </div>
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">Carbohidratos (%)</label>
+                <input type="number" id="carbs" value="58" min="5" max="70" step="0.01" class="w-full px-6 py-5 border border-gray-300 rounded-2xl input-focus text-2xl font-semibold text-center" required>
+              </div>
+              <div>
+                <label class="block text-xs text-gray-500 mb-1">Grasas (%)</label>
+                <input type="number" id="grasas" value="30" min="5" max="50" step="0.01" class="w-full px-6 py-5 border border-gray-300 rounded-2xl input-focus text-2xl font-semibold text-center" required>
+              </div>
+            </div>
+            <p id="porcentajeTotal" class="text-center text-sm mt-3 text-emerald-700 font-medium">Total: 100%</p>
+          </div>
+
+          <div class="flex gap-4 mt-8">
+            <button type="submit" class="flex-1 bg-emerald-600 hover:bg-emerald-700 transition-all text-white font-semibold py-5 rounded-2xl text-xl flex items-center justify-center gap-3">
+              <i class="fa-solid fa-calculator"></i>
+              Calcular Requerimientos
+            </button>
+            
+            <button type="button" id="btnPDF" class="flex-1 bg-teal-600 hover:bg-teal-700 transition-all text-white font-semibold py-5 rounded-2xl text-xl flex items-center justify-center gap-3">
+              <i class="fa-solid fa-file-pdf"></i>
+              Generar PDF
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Resultados (igual que antes) -->
+      <div id="resultados" class="lg:col-span-2 bg-white rounded-3xl p-10 card hidden">
+        <!-- ... (el contenido de resultados se mantiene igual) ... -->
+        <h2 class="text-2xl font-semibold text-gray-800 mb-8 flex items-center gap-3">
+          <i class="fa-solid fa-file-medical text-emerald-600"></i> Resultados
+        </h2>
+
+        <div class="space-y-8">
+          <div class="bg-emerald-50 rounded-2xl p-6">
+            <p class="text-emerald-700 text-sm font-medium">Requerimiento Calórico Basal (RCB)</p>
+            <p id="rcb" class="text-5xl font-bold text-emerald-800 mt-2">0 kcal</p>
+            <p class="text-xs text-emerald-600">Fórmula Mifflin-St Jeor</p>
+          </div>
+
+          <div class="bg-teal-50 rounded-2xl p-6">
+            <p class="text-teal-700 text-sm font-medium">Requerimiento Calórico Total (RCT)</p>
+            <p id="rct" class="text-6xl font-bold text-teal-800 mt-2 decimal-result">0 kcal/día</p>
+            <p id="factorUsado" class="text-xs text-teal-600 mt-1"></p>
+          </div>
+
+          <div>
+            <h3 class="font-semibold text-gray-700 mb-5">Distribución de Macronutrientes (con decimales)</h3>
+            <div id="macrosContainer" class="space-y-6"></div>
+          </div>
+        </div>
+
+        <div class="mt-10 text-xs text-gray-500 border-t pt-6">
+          <p><strong>Nota:</strong> Valores mostrados con precisión completa (sin redondeo en gramos). Ajustar según necesidad clínica.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // === Variables y funciones anteriores (se mantienen) ===
+    const form = document.getElementById('calcForm');
+    const resultadosDiv = document.getElementById('resultados');
+    const btnPDF = document.getElementById('btnPDF');
+
+    const factores = {
+      hombre: { sedentaria: 1.2, liviana: 1.55, moderada: 1.8, intensa: 2.1 },
+      mujer:  { sedentaria: 1.2, liviana: 1.56, moderada: 1.64, intensa: 1.82 }
+    };
+
+    function calcularRCB(sexo, peso, talla, edad) {
+      if (sexo === 'hombre') {
+        return (10 * peso) + (6.25 * talla) - (5 * edad) + 5;
+      } else {
+        return (10 * peso) + (6.25 * talla) - (5 * edad) - 161;
+      }
+    }
+
+    function mostrarMacros(rct, protPct, carbPct, grasaPct) {
+      const container = document.getElementById('macrosContainer');
+      container.innerHTML = '';
+
+      const macros = [
+        { nombre: 'Proteínas', pct: protPct, g: (rct * protPct / 100) / 4, kcal: rct * protPct / 100, color: 'emerald' },
+        { nombre: 'Carbohidratos', pct: carbPct, g: (rct * carbPct / 100) / 4, kcal: rct * carbPct / 100, color: 'amber' },
+        { nombre: 'Grasas', pct: grasaPct, g: (rct * grasaPct / 100) / 9, kcal: rct * grasaPct / 100, color: 'rose' }
+      ];
+
+      macros.forEach(m => {
+        const div = document.createElement('div');
+        div.className = "bg-gray-50 rounded-2xl p-6";
+        div.innerHTML = `
+          <div class="flex justify-between items-center mb-3">
+            <span class="font-semibold text-lg">${m.nombre}</span>
+            <span class="text-3xl font-bold text-gray-800 decimal-result">${m.g.toFixed(4)} g</span>
+          </div>
+          <div class="flex justify-between text-sm text-gray-600 mb-3">
+            <span>${m.pct}% del total</span>
+            <span class="decimal-result">${m.kcal.toFixed(2)} kcal</span>
+          </div>
+          <div class="h-2.5 bg-gray-200 rounded-full overflow-hidden">
+            <div class="h-full bg-${m.color}-500 rounded-full" style="width: ${m.pct}%"></div>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    // === Función para generar PDF ===
+    function generarPDF() {
+      if (resultadosDiv.classList.contains('hidden')) {
+        alert("Primero debes calcular los requerimientos");
+        return;
+      }
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      const sexo = document.getElementById('sexo').value === 'hombre' ? 'Masculino' : 'Femenino';
+      const edad = document.getElementById('edad').value;
+      const peso = document.getElementById('peso').value;
+      const talla = document.getElementById('talla').value;
+      const actividad = document.getElementById('actividad').options[document.getElementById('actividad').selectedIndex].text;
+
+      const rcb = document.getElementById('rcb').textContent;
+      const rct = document.getElementById('rct').textContent;
+      const factor = document.getElementById('factorUsado').textContent;
+
+      // Título y logo
+      doc.setFillColor(16, 185, 129);
+      doc.rect(0, 0, 210, 30, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(22);
+      doc.text("Informe Nutricional", 105, 20, { align: "center" });
+
+      doc.setTextColor(0, 0, 0);
+      doc.setFontSize(16);
+      doc.text("", 105, 45, { align: "center" });
+
+      // Datos del paciente
+      doc.setFontSize(12);
+      doc.text("Datos del Paciente", 20, 65);
+      doc.setFontSize(11);
+      doc.text(`Sexo: ${sexo}`, 20, 75);
+      doc.text(`Edad: ${edad} años`, 20, 82);
+      doc.text(`Peso: ${peso} kg`, 20, 89);
+      doc.text(`Talla: ${talla} cm`, 20, 96);
+      doc.text(`Nivel de actividad: ${actividad}`, 20, 103);
+
+      // Resultados
+      doc.setFontSize(14);
+      doc.text("Resultados", 20, 120);
+      doc.setFontSize(12);
+      doc.text(`Requerimiento Calórico Basal (RCB): ${rcb}`, 20, 130);
+      doc.text(`Requerimiento Calórico Total (RCT): ${rct}`, 20, 137);
+      
+
+      // Macronutrientes
+      doc.setFontSize(14);
+      doc.text("Distribución de Macronutrientes", 20, 160);
+
+      const prot = document.querySelector('#macrosContainer div:nth-child(1) .text-3xl').textContent;
+      const carb = document.querySelector('#macrosContainer div:nth-child(2) .text-3xl').textContent;
+      const grasa = document.querySelector('#macrosContainer div:nth-child(3) .text-3xl').textContent;
+
+      doc.setFontSize(11);
+      doc.text(`Proteínas: ${prot}`, 20, 170);
+      doc.text(`Carbohidratos: ${carb}`, 20, 177);
+      doc.text(`Grasas: ${grasa}`, 20, 184);
+
+      // Fecha y nota
+      const fecha = new Date().toLocaleDateString('es-ES', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      });
+
+      doc.setFontSize(10);
+      doc.text(`Fecha: ${fecha}`, 20, 200);
+      
+
+      // Descargar
+      doc.save(`Informe_Nutricional_\( {sexo}_ \){edad}años.pdf`);
+    }
+
+    // Evento del formulario (mantener igual)
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const sexo = document.getElementById('sexo').value;
+      const edad = parseFloat(document.getElementById('edad').value);
+      const peso = parseFloat(document.getElementById('peso').value);
+      const talla = parseFloat(document.getElementById('talla').value);
+      const nivel = document.getElementById('actividad').value;
+
+      const protPct = parseFloat(document.getElementById('proteinas').value);
+      const carbPct = parseFloat(document.getElementById('carbs').value);
+      const grasaPct = parseFloat(document.getElementById('grasas').value);
+
+      const totalPct = protPct + carbPct + grasaPct;
+      if (Math.abs(totalPct - 100) > 0.01) {
+        alert(`Los porcentajes deben sumar 100%. Actual: ${totalPct.toFixed(2)}%`);
+        return;
+      }
+
+      const rcb = calcularRCB(sexo, peso, talla, edad);
+      const factor = factores[sexo][nivel];
+      const rct = rcb * factor;
+
+      document.getElementById('rcb').textContent = rcb.toFixed(0) + ' kcal';
+      document.getElementById('rct').textContent = rct.toFixed(2) + ' kcal/día';
+      document.getElementById('factorUsado').textContent = `Factor (${nivel}): × ${factor}`;
+
+      mostrarMacros(rct, protPct, carbPct, grasaPct);
+
+      resultadosDiv.classList.remove('hidden');
+      resultadosDiv.scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // Actualizar porcentaje total
+    ['proteinas', 'carbs', 'grasas'].forEach(id => {
+      document.getElementById(id).addEventListener('input', () => {
+        const p = parseFloat(document.getElementById('proteinas').value) || 0;
+        const c = parseFloat(document.getElementById('carbs').value) || 0;
+        const g = parseFloat(document.getElementById('grasas').value) || 0;
+        document.getElementById('porcentajeTotal').textContent = `Total: ${(p + c + g).toFixed(2)}%`;
+      });
+    });
+
+    // Botón PDF
+    btnPDF.addEventListener('click', generarPDF);
+  </script>
+</body>
+</html>
